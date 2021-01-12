@@ -4,7 +4,7 @@
 VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
 
 if [ -z $VERSION ];then
-    NEW_TAG="1.0"
+    NEW_TAG="v1.0"
     echo "No tag present."
     echo "Creating tag: $NEW_TAG"
     git tag $NEW_TAG
@@ -17,13 +17,18 @@ fi
 VERSION_BITS=(${VERSION//./ })
 
 #get number parts and increase last one by 1
-VNUM1=${VERSION_BITS[0]}
+VNUM1=${VERSION_BITS[0]:1} # remove the v
 VNUM2=${VERSION_BITS[1]}
-VNUM2=$((VNUM2+1))
+
+if [[ $1 == "master" ]]; then
+    VNUM1=$((VNUM1+1))
+else
+    VNUM2=$((VNUM2+1))
+fi
 
 #create new tag
-NEW_TAG="${VNUM1}.${VNUM2}"
-
+NEW_TAG="v${VNUM1}.${VNUM2}"
+echo $NEW_TAG
 #get current hash and see if it already has a tag
 GIT_COMMIT=`git rev-parse HEAD`
 CURRENT_COMMIT_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
