@@ -28,7 +28,7 @@ fi
 
 #create new tag
 NEW_TAG="v${VNUM1}.${VNUM2}"
-echo $NEW_TAG
+
 #get current hash and see if it already has a tag
 GIT_COMMIT=`git rev-parse HEAD`
 CURRENT_COMMIT_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
