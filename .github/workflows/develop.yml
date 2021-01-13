@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.7]
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -28,6 +27,14 @@ jobs:
       - name: Test with pytest
         run: |
           coverage run -m pytest
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
       - id: date
         run: echo "##[set-output name=data;]$(date)"
       - name: Time badge
@@ -38,3 +45,22 @@ jobs:
           STATUS: ${{ steps.date.outputs.data }}
           COLOR: red
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Find Tag
+        continue-on-error: true
+        id: tagger
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: '*-rc*'
+          commit-ish: 'HEAD~'
+      - name: Increment tag
+        if: ${{ success() }}
+        id: inc_tagger
+        run:
+          bash ./tag.sh ${{steps.tagger.outputs.tag}}
+      - name: New tag
+        if: ${{ failure() }}
+        id: new_tagger
+        run:
+          git tag v1.0b0 && git push --tags
