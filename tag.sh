@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#get highest tag number
+# get highest tag number
 # git fetch --tags --force
 # VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
 VERSION=$1
+GIT_COMMIT=`git rev-parse HEAD`
 
 echo $VERSION
 
@@ -11,7 +12,7 @@ if [ -z $VERSION ];then
     NEW_TAG="v1.0b0"
     echo "No tag present."
     echo "Creating tag: $NEW_TAG"
-    git tag $NEW_TAG
+    git tag $NEW_TAG $GIT_COMMIT
     git push --tags
     echo "Tag created and pushed: $NEW_TAG"
     exit 0;
@@ -38,14 +39,13 @@ fi
 NEW_TAG="v${MAJOR}.${MINOR}b${BUILDVER[1]}"
 
 #get current hash and see if it already has a tag
-GIT_COMMIT=`git rev-parse HEAD`
 CURRENT_COMMIT_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
 echo "tag with: $NEW_TAG"
 
 #only tag if no tag already (would be better if the git describe command above could have a silent option)
 if [ -z "$CURRENT_COMMIT_TAG" ]; then
     echo "Updating $VERSION to $NEW_TAG"
-    git tag $NEW_TAG
+    git tag $NEW_TAG $CURRENT_COMMIT_TAG
     git push --tags
     echo "Tag created and pushed: $NEW_TAG"
 else
