@@ -62,7 +62,13 @@ jobs:
           include: 'v*'
           exclude: '*-rc*'
           commit-ish: 'HEAD~'
-      - name: Tag develop branch
-        id: display
+      - name: Increment tag
+        if: ${{ success() }}
+        id: inc_tagger
         run:
           bash ./tag.sh ${{steps.tagger.outputs.tag}} master
+      - name: New tag
+        if: ${{ failure() }}
+        id: new_tagger
+        run:
+          git tag v2.0b0 && git push --tags
