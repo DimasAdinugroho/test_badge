@@ -18,7 +18,7 @@ if [ -z $VERSION ];then
 fi
 
 #replace . with space so can split into an array
-VERSION_BITS=(${VERSION//./ })
+VERSION_BITS=${VERSION//./ }
 
 #get number parts and increase last one by 1
 MAJOR=${VERSION_BITS[0]:1} # remove the v
