@@ -29,6 +29,7 @@ REGEXMINOR='([0-9]+)b'
 [[ "$MINOR" =~ $REGEXMINOR ]]
 if [[ $2 == "master" ]]; then
     MAJOR=$((MAJOR+1))
+    MINOR=$((BASH_REMATCH[1]))
 else
     MINOR=$((BASH_REMATCH[1]+1))
 fi
