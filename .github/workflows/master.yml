@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - main
 
 jobs:
   build:
@@ -35,3 +36,39 @@ jobs:
           STATUS: ${{ steps.date.outputs.data }}
           COLOR: red
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - id: date
+        run: echo "##[set-output name=data;]$(date)"
+      - name: Time badge
+        uses: RubbaBoy/BYOB@v1.2.0
+        with:
+          NAME: time
+          LABEL: 'Updated at'
+          STATUS: ${{ steps.date.outputs.data }}
+          COLOR: red
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: '*-rc*'
+          commit-ish: 'HEAD~'
+      - name: Increment tag
+        if: ${{ success() }}
+        id: inc_tagger
+        run:
+          bash ./tag.sh ${{steps.tagger.outputs.tag}} master
+      - name: New tag
+        if: ${{ failure() }}
+        id: new_tagger
+        run:
+          git tag v2.0b0 && git push --tags
