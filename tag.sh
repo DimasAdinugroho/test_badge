@@ -3,7 +3,7 @@
 #get highest tag number
 # git fetch --tags --force
 # VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
-VERSION=${steps.tagger.outputs.tag}
+VERSION=$1
 
 echo $VERSION
 
@@ -28,7 +28,7 @@ BUILDVER=${MINOR//b/ }
 
 REGEXMINOR='([0-9]+)b'
 [[ "$MINOR" =~ $REGEXMINOR ]]
-if [[ $1 == "master" ]]; then
+if [[ $2 == "master" ]]; then
     MAJOR=$((MAJOR+1))
 else
     MINOR=$((BASH_REMATCH[1]+1))

@@ -56,4 +56,4 @@ jobs:
       - name: Tag develop branch
         id: display
         run:
-          sh ./tag.sh
+          sh ./tag.sh ${{steps.tagger.outputs.tag}}
