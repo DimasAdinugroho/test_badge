@@ -2,9 +2,10 @@
 
 #get highest tag number
 VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+echo $VERSION
 
 if [ -z $VERSION ];then
-    NEW_TAG="v1.0"
+    NEW_TAG="v1.0b0"
     echo "No tag present."
     echo "Creating tag: $NEW_TAG"
     git tag $NEW_TAG
@@ -24,7 +25,6 @@ BUILDVER=${MINOR//b/ }
 
 REGEXMINOR='([0-9]+)b'
 [[ "$MINOR" =~ $REGEXMINOR ]]
-echo "${BASH_REMATCH[1]}"
 if [[ $1 == "master" ]]; then
     MAJOR=$((MAJOR+1))
 else
