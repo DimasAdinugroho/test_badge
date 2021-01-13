@@ -1,8 +1,9 @@
 #!/bin/bash
 
 #get highest tag number
-git fetch --tags --force
-VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+# git fetch --tags --force
+# VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+VERSION=${{steps.tagger.outputs.tag}}
 echo $VERSION
 
 if [ -z $VERSION ];then
