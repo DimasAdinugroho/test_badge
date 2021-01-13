@@ -17,21 +17,27 @@ fi
 VERSION_BITS=(${VERSION//./ })
 
 #get number parts and increase last one by 1
-VNUM1=${VERSION_BITS[0]:1} # remove the v
-VNUM2=${VERSION_BITS[1]}
+MAJOR=${VERSION_BITS[0]:1} # remove the v
+MINOR=${VERSION_BITS[1]}
+BUILDVER=${MINOR//b/ }
 
+
+REGEXMINOR='([0-9]+)b'
+[[ "$MINOR" =~ $REGEXMINOR ]]
+echo "${BASH_REMATCH[1]}"
 if [[ $1 == "master" ]]; then
-    VNUM1=$((VNUM1+1))
+    MAJOR=$((MAJOR+1))
 else
-    VNUM2=$((VNUM2+1))
+    MINOR=$((BASH_REMATCH[1]+1))
 fi
 
 #create new tag
-NEW_TAG="v${VNUM1}.${VNUM2}"
+NEW_TAG="v${MAJOR}.${MINOR}b${BUILDVER[1]}"
 
 #get current hash and see if it already has a tag
 GIT_COMMIT=`git rev-parse HEAD`
 CURRENT_COMMIT_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
+echo "tag with: $NEW_TAG"
 
 #only tag if no tag already (would be better if the git describe command above could have a silent option)
 if [ -z "$CURRENT_COMMIT_TAG" ]; then
