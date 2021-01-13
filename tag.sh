@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #get highest tag number
+git fetch --tags --force
 VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
 echo $VERSION
 
